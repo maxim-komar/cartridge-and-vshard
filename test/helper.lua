@@ -11,17 +11,39 @@ helper.root = fio.dirname(fio.abspath(package.search('init')))
 helper.datadir = fio.pathjoin(helper.root, 'tmp', 'db_test')
 helper.server_command = fio.pathjoin(helper.root, 'init.lua')
 
+helper.api_server = 'api-1'
+
 helper.cluster = cartridge_helpers.Cluster:new({
     server_command = helper.server_command,
-    datadir = helper.datadir,
-    use_vshard = false,
-    replicasets = {
+    datadir        = helper.datadir,
+    use_vshard     = true,
+    replicasets    = {
         {
-            alias = 'api',
-            uuid = cartridge_helpers.uuid('a'),
-            roles = {'app.roles.custom'},
+            alias   = 'storage-1',
+            uuid    = cartridge_helpers.uuid(1),
+            roles   = {'app.roles.storage'},
             servers = {
-                { instance_uuid = cartridge_helpers.uuid('a', 1), alias = 'api' },
+                { instance_uuid = cartridge_helpers.uuid(1, 'a'), alias = 'storage-1a' },
+                { instance_uuid = cartridge_helpers.uuid(1, 'b'), alias = 'storage-1b' },
+            }
+        },
+
+        {
+            alias   = 'storage-2',
+            uuid    = cartridge_helpers.uuid(2),
+            roles   = {'app.roles.storage'},
+            servers = {
+                { instance_uuid = cartridge_helpers.uuid(2, 'a'), alias = 'storage-2a' },
+                { instance_uuid = cartridge_helpers.uuid(2, 'b'), alias = 'storage-2b' },
+            }
+        },
+
+        {
+            alias   = 'api',
+            uuid    = cartridge_helpers.uuid('f'),
+            roles   = {'app.roles.api'},
+            servers = {
+                { instance_uuid = cartridge_helpers.uuid('f', 1), alias = helper.api_server },
             },
         },
     }
